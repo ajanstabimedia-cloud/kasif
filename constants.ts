@@ -1,6 +1,5 @@
-import { Badge, MarketItem, Student, Surah, WeeklyTask, Announcement } from './types';
 
-export const INSTRUCTOR_CODE = "1453";
+import { Badge, MarketItem, Student, Surah, WeeklyTask, Announcement, Instructor } from './types';
 
 export const SURAH_LIST: Surah[] = [
   { id: 'duha', title: 'Duha Suresi', audioUrl: 'https://server8.mp3quran.net/afs/093.mp3' },
@@ -35,40 +34,29 @@ export const AVAILABLE_BADGES: Badge[] = [
 ];
 
 export const INITIAL_TASKS: WeeklyTask[] = [
-  { id: 1, title: '5 Vakit Camiye Gel', reward: 100, currency: 'NP', target: 5 },
-  { id: 2, title: 'Bir arkadaşını getir', reward: 50, currency: 'GP', target: 1 },
+  { id: 1, title: 'Cuma Günü Camiye Git ve Namaz Kıl', reward: 150, currency: 'NP', target: 1 },
 ];
 
 export const INITIAL_ANNOUNCEMENTS: Announcement[] = [
-  { id: 1, title: 'Hoşgeldiniz', message: 'Yeni dönem hepimize hayırlı olsun.', date: new Date().toLocaleDateString() }
+  { id: 1, title: 'Hoşgeldiniz', message: 'Yeni dönem hayırlı olsun!', date: '01.01.2024', classCode: '1453' }
+];
+
+export const INITIAL_INSTRUCTORS: Instructor[] = [
+  { id: 1, name: 'Hoca Ahmet', username: 'hoca', password: '123', classCodes: ['1453'] }
 ];
 
 export const INITIAL_STUDENTS: Student[] = [
   {
     id: 101,
-    name: 'Ahmet Yılmaz',
-    group: 'Kaşif-A',
+    name: 'Örnek Öğrenci',
+    username: 'ogrenci',
+    password: '123',
+    group: 'Kaşif Grubu',
     status: 'approved',
-    classCode: INSTRUCTOR_CODE,
-    points: 1250,
-    namazPoints: 120,
+    classCode: '1453',
+    points: 1000,
+    namazPoints: 50,
     inventory: [],
-    badges: ['namaz_kurtu'],
-    completedTasks: [],
-    attendance: {},
-    reading: {},
-    memorization: { 'fatiha': 'passed' },
-    prayers: {}
-  },
-  {
-    id: 102,
-    name: 'Mehmet Demir',
-    group: 'Kaşif-B',
-    status: 'approved',
-    classCode: INSTRUCTOR_CODE,
-    points: 800,
-    namazPoints: 40,
-    inventory: ['chocolate'],
     badges: [],
     completedTasks: [],
     attendance: {},
@@ -79,9 +67,9 @@ export const INITIAL_STUDENTS: Student[] = [
 ];
 
 export const PRAYER_TIMES = [
-  { id: 'sabah', label: 'Sabah', icon: '🌅' },
-  { id: 'ogle', label: 'Öğle', icon: '☀️' },
-  { id: 'ikindi', label: 'İkindi', icon: '🌤️' },
-  { id: 'aksam', label: 'Akşam', icon: '🌆' },
-  { id: 'yatsi', label: 'Yatsı', icon: '🌙' },
+  { id: 'sabah', label: 'Sabah', icon: '🌅', hour: 5 },
+  { id: 'ogle', label: 'Öğle', icon: '☀️', hour: 13 },
+  { id: 'ikindi', label: 'İkindi', icon: '🌤️', hour: 16 },
+  { id: 'aksam', label: 'Akşam', icon: '🌆', hour: 19 },
+  { id: 'yatsi', label: 'Yatsı', icon: '🌙', hour: 21 },
 ];

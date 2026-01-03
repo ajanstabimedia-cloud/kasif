@@ -1,3 +1,4 @@
+
 export type UserRole = 'instructor' | 'student' | null;
 
 export interface PrayerStatus {
@@ -11,7 +12,7 @@ export interface Badge {
   icon: string;
   description: string;
   color: string;
-  value: number; // Added point value
+  value: number;
 }
 
 export interface WeeklyTask {
@@ -27,12 +28,15 @@ export interface Announcement {
   title: string;
   message: string;
   date: string;
+  classCode: string; // Announcement is now per group
 }
 
 export interface Student {
   id: number;
   name: string;
-  group: string; // e.g., 'A Grubu'
+  username: string;
+  password: string;
+  group: string; 
   status: 'approved' | 'pending'; 
   classCode: string; 
   points: number;       
@@ -40,14 +44,18 @@ export interface Student {
   inventory: string[];  
   badges: string[];     
   completedTasks: number[]; 
-  
-  // Kaşif Data
   attendance: Record<string, 'present' | 'absent' | 'none'>; 
   reading: Record<string, 'passed' | 'study' | 'failed' | 'none'>; 
   memorization: Record<string, 'passed' | 'repeat' | 'none'>; 
-  
-  // Namaz Data
   prayers: Record<string, PrayerStatus>; 
+}
+
+export interface Instructor {
+  id: number;
+  name: string;
+  username: string;
+  password: string;
+  classCodes: string[]; // List of codes/groups this instructor created
 }
 
 export interface MarketItem {

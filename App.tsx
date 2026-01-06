@@ -5,49 +5,50 @@ import { INITIAL_STUDENTS, INITIAL_MARKET_ITEMS, INITIAL_TASKS, INITIAL_ANNOUNCE
 import LoginScreen from './components/LoginScreen';
 import InstructorDashboard from './components/InstructorDashboard';
 import StudentDashboard from './components/StudentDashboard';
+import AdminDashboard from './components/AdminDashboard';
 
 export default function App() {
   const [role, setRole] = useState<UserRole>(null);
-  const [currentUser, setCurrentUser] = useState<Student | Instructor | null>(null);
+  const [currentUser, setCurrentUser] = useState<Student | Instructor | any>(null);
   
   const [students, setStudents] = useState<Student[]>(() => {
-    const saved = localStorage.getItem('kasif_students_v3.1');
+    const saved = localStorage.getItem('kasif_students_v3.2');
     return saved ? JSON.parse(saved) : INITIAL_STUDENTS;
   });
   
   const [instructors, setInstructors] = useState<Instructor[]>(() => {
-    const saved = localStorage.getItem('kasif_instructors_v3.1');
+    const saved = localStorage.getItem('kasif_instructors_v3.2');
     return saved ? JSON.parse(saved) : INITIAL_INSTRUCTORS;
   });
 
   const [marketItems, setMarketItems] = useState<MarketItem[]>(() => {
-    const saved = localStorage.getItem('kasif_market_v3.1');
+    const saved = localStorage.getItem('kasif_market_v3.2');
     return saved ? JSON.parse(saved) : INITIAL_MARKET_ITEMS;
   });
 
   const [tasks, setTasks] = useState<WeeklyTask[]>(() => {
-    const saved = localStorage.getItem('kasif_tasks_v3.1');
+    const saved = localStorage.getItem('kasif_tasks_v3.2');
     return saved ? JSON.parse(saved) : INITIAL_TASKS;
   });
 
   const [announcements, setAnnouncements] = useState<Announcement[]>(() => {
-    const saved = localStorage.getItem('kasif_announcements_v3.1');
+    const saved = localStorage.getItem('kasif_announcements_v3.2');
     return saved ? JSON.parse(saved) : INITIAL_ANNOUNCEMENTS;
   });
 
   const [badges, setBadges] = useState<Badge[]>(() => {
-    const saved = localStorage.getItem('kasif_badges_v3.1');
+    const saved = localStorage.getItem('kasif_badges_v3.2');
     return saved ? JSON.parse(saved) : AVAILABLE_BADGES;
   });
 
-  useEffect(() => { localStorage.setItem('kasif_students_v3.1', JSON.stringify(students)); }, [students]);
-  useEffect(() => { localStorage.setItem('kasif_instructors_v3.1', JSON.stringify(instructors)); }, [instructors]);
-  useEffect(() => { localStorage.setItem('kasif_market_v3.1', JSON.stringify(marketItems)); }, [marketItems]);
-  useEffect(() => { localStorage.setItem('kasif_tasks_v3.1', JSON.stringify(tasks)); }, [tasks]);
-  useEffect(() => { localStorage.setItem('kasif_announcements_v3.1', JSON.stringify(announcements)); }, [announcements]);
-  useEffect(() => { localStorage.setItem('kasif_badges_v3.1', JSON.stringify(badges)); }, [badges]);
+  useEffect(() => { localStorage.setItem('kasif_students_v3.2', JSON.stringify(students)); }, [students]);
+  useEffect(() => { localStorage.setItem('kasif_instructors_v3.2', JSON.stringify(instructors)); }, [instructors]);
+  useEffect(() => { localStorage.setItem('kasif_market_v3.2', JSON.stringify(marketItems)); }, [marketItems]);
+  useEffect(() => { localStorage.setItem('kasif_tasks_v3.2', JSON.stringify(tasks)); }, [tasks]);
+  useEffect(() => { localStorage.setItem('kasif_announcements_v3.2', JSON.stringify(announcements)); }, [announcements]);
+  useEffect(() => { localStorage.setItem('kasif_badges_v3.2', JSON.stringify(badges)); }, [badges]);
 
-  const handleLogin = (selectedRole: UserRole, user: Student | Instructor) => {
+  const handleLogin = (selectedRole: UserRole, user: Student | Instructor | any) => {
     setRole(selectedRole);
     setCurrentUser(user);
   };
@@ -61,11 +62,19 @@ export default function App() {
       group: 'Kaşif Grubu',
       status: 'pending',
       classCode: data.classCode,
+      // New fields handling
+      parentPhone: data.parentPhone || '',
+      studentPhone: data.studentPhone || '',
+      address: data.address || '',
+      school: data.school || '',
+      
       points: 0,
       namazPoints: 0,
       inventory: [],
+      pendingItems: [],
       badges: [],
       completedTasks: [],
+      pendingTasks: [],
       attendance: {},
       reading: {},
       memorization: {},
@@ -116,7 +125,15 @@ export default function App() {
   
   return (
     <div className="min-h-screen bg-gray-100 font-sans text-gray-800">
-      {role === 'instructor' ? (
+      {role === 'admin' ? (
+        <AdminDashboard
+          instructors={instructors}
+          students={students}
+          updateInstructor={updateInstructor}
+          setInstructors={setInstructors}
+          onLogout={handleLogout}
+        />
+      ) : role === 'instructor' ? (
         <InstructorDashboard 
           instructor={currentUser as Instructor}
           students={students.filter(s => (currentUser as Instructor).classCodes.includes(s.classCode))} 

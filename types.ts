@@ -1,5 +1,5 @@
 
-export type UserRole = 'instructor' | 'student' | null;
+export type UserRole = 'instructor' | 'student' | 'admin' | null;
 
 export interface PrayerStatus {
   type: 'tek' | 'cemaat' | 'none';
@@ -11,7 +11,7 @@ export interface Badge {
   title: string;
   icon: string;
   description: string;
-  color: string;
+  currency: 'GP' | 'NP';
   value: number;
 }
 
@@ -28,7 +28,16 @@ export interface Announcement {
   title: string;
   message: string;
   date: string;
-  classCode: string; // Announcement is now per group
+  classCode: string;
+}
+
+export interface PendingItem {
+  id: string; // unique transaction id
+  itemId: string;
+  itemTitle: string;
+  price: number;
+  currency: 'GP' | 'NP';
+  timestamp: number;
 }
 
 export interface Student {
@@ -39,13 +48,22 @@ export interface Student {
   group: string; 
   status: 'approved' | 'pending'; 
   classCode: string; 
+  // New Fields
+  parentPhone?: string;
+  studentPhone?: string;
+  address?: string;
+  school?: string;
+  
   points: number;       
   namazPoints: number;  
-  inventory: string[];  
+  inventory: string[];
+  pendingItems: PendingItem[]; // Market items waiting for instructor approval
   badges: string[];     
   completedTasks: number[]; 
+  pendingTasks: number[]; // Tasks waiting for instructor approval
   attendance: Record<string, 'present' | 'absent' | 'none'>; 
   reading: Record<string, 'passed' | 'study' | 'failed' | 'none'>; 
+  readingAssignment?: string; 
   memorization: Record<string, 'passed' | 'repeat' | 'none'>; 
   prayers: Record<string, PrayerStatus>; 
 }
@@ -55,7 +73,7 @@ export interface Instructor {
   name: string;
   username: string;
   password: string;
-  classCodes: string[]; // List of codes/groups this instructor created
+  classCodes: string[];
 }
 
 export interface MarketItem {
@@ -65,10 +83,11 @@ export interface MarketItem {
   currency: 'GP' | 'NP';
   icon: string;
   description: string;
+  stock: number; // Stock tracking
 }
 
 export interface Surah {
   id: string;
   title: string;
-  audioUrl: string;
+  number: number;
 }

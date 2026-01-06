@@ -1,64 +1,80 @@
 
 import { Badge, MarketItem, Student, Surah, WeeklyTask, Announcement, Instructor } from './types';
 
+// Ortaokul seviyesi için ezber sırası: Fatiha + (Nas -> Duha)
 export const SURAH_LIST: Surah[] = [
-  { id: 'duha', title: 'Duha Suresi', audioUrl: 'https://server8.mp3quran.net/afs/093.mp3' },
-  { id: 'insirah', title: 'İnşirah Suresi', audioUrl: 'https://server8.mp3quran.net/afs/094.mp3' },
-  { id: 'tin', title: 'Tin Suresi', audioUrl: 'https://server8.mp3quran.net/afs/095.mp3' },
-  { id: 'alak', title: 'Alak Suresi', audioUrl: 'https://server8.mp3quran.net/afs/096.mp3' },
-  { id: 'kadir', title: 'Kadir Suresi', audioUrl: 'https://server8.mp3quran.net/afs/097.mp3' },
-  { id: 'fil', title: 'Fil Suresi', audioUrl: 'https://server8.mp3quran.net/afs/105.mp3' },
-  { id: 'kureys', title: 'Kureyş Suresi', audioUrl: 'https://server8.mp3quran.net/afs/106.mp3' },
-  { id: 'maun', title: 'Maun Suresi', audioUrl: 'https://server8.mp3quran.net/afs/107.mp3' },
-  { id: 'kevser', title: 'Kevser Suresi', audioUrl: 'https://server8.mp3quran.net/afs/108.mp3' },
-  { id: 'kafirun', title: 'Kafirun Suresi', audioUrl: 'https://server8.mp3quran.net/afs/109.mp3' },
-  { id: 'nasr', title: 'Nasr Suresi', audioUrl: 'https://server8.mp3quran.net/afs/110.mp3' },
-  { id: 'tebbet', title: 'Tebbet Suresi', audioUrl: 'https://server8.mp3quran.net/afs/111.mp3' },
-  { id: 'ihlas', title: 'İhlas Suresi', audioUrl: 'https://server8.mp3quran.net/afs/112.mp3' },
-  { id: 'felak', title: 'Felak Suresi', audioUrl: 'https://server8.mp3quran.net/afs/113.mp3' },
-  { id: 'nas', title: 'Nas Suresi', audioUrl: 'https://server8.mp3quran.net/afs/114.mp3' },
+  { id: 'fatiha', title: 'Fatiha Suresi', number: 1 },
+  { id: 'nas', title: 'Nas Suresi', number: 114 },
+  { id: 'felak', title: 'Felak Suresi', number: 113 },
+  { id: 'ihlas', title: 'İhlas Suresi', number: 112 },
+  { id: 'tebbet', title: 'Tebbet Suresi', number: 111 },
+  { id: 'nasr', title: 'Nasr Suresi', number: 110 },
+  { id: 'kafirun', title: 'Kafirun Suresi', number: 109 },
+  { id: 'kevser', title: 'Kevser Suresi', number: 108 },
+  { id: 'maun', title: 'Maun Suresi', number: 107 },
+  { id: 'kureys', title: 'Kureyş Suresi', number: 106 },
+  { id: 'fil', title: 'Fil Suresi', number: 105 },
+  { id: 'humeze', title: 'Hümeze Suresi', number: 104 },
+  { id: 'asr', title: 'Asr Suresi', number: 103 },
+  { id: 'tekasur', title: 'Tekasür Suresi', number: 102 },
+  { id: 'karia', title: 'Karia Suresi', number: 101 },
+  { id: 'adiyat', title: 'Adiyat Suresi', number: 100 },
+  { id: 'zilzal', title: 'Zilzal Suresi', number: 99 },
+  { id: 'beyyine', title: 'Beyyine Suresi', number: 98 },
+  { id: 'kadir', title: 'Kadir Suresi', number: 97 },
+  { id: 'alak', title: 'Alak Suresi', number: 96 },
+  { id: 'tin', title: 'Tin Suresi', number: 95 },
+  { id: 'insirah', title: 'İnşirah Suresi', number: 94 },
+  { id: 'duha', title: 'Duha Suresi', number: 93 },
 ];
 
 export const INITIAL_MARKET_ITEMS: MarketItem[] = [
-  { id: 'chocolate', title: 'Çikolata', price: 300, currency: 'GP', icon: '🍫', description: 'Lezzetli bir ödül.' },
-  { id: 'game_time', title: '15 Dk Oyun', price: 500, currency: 'GP', icon: '🎮', description: 'Ekstra oyun süresi.' },
-  { id: 'football', title: 'Halı Saha', price: 2000, currency: 'NP', icon: '⚽', description: 'Hafta sonu maçı bileti.' },
-  { id: 'toy', title: 'Oyuncak Araba', price: 1500, currency: 'GP', icon: '🏎️', description: 'Küçük oyuncak araba.' },
+  { id: 'kantin_cek', title: '50TL Kantin Çeki', price: 500, currency: 'GP', icon: '🍔', description: 'Okul kantininde geçerli.', stock: 10 },
+  { id: 'ozel_izin', title: 'Serbest Kıyafet Günü', price: 1000, currency: 'NP', icon: '👕', description: 'Bir gün serbest kıyafet hakkı.', stock: 5 },
+  { id: 'mac_bileti', title: 'Halı Saha Maçı', price: 750, currency: 'GP', icon: '⚽', description: 'Arkadaşlarla maç organizasyonu.', stock: 20 },
+  { id: 'kitap', title: 'D&R Hediye Kartı', price: 1500, currency: 'NP', icon: '📚', description: 'İstediğin bir kitap için.', stock: 3 },
 ];
 
 export const AVAILABLE_BADGES: Badge[] = [
-  { id: 'namaz_kurtu', title: 'Namaz Kurdu', icon: '🐺', description: '5 Vakit namazını eksiksiz kılanlar için.', color: 'bg-emerald-500', value: 100 },
-  { id: 'ezber_ustasi', title: 'Ezber Ustası', icon: '🧠', description: 'Haftanın en çok ezber yapanı.', color: 'bg-indigo-500', value: 150 },
-  { id: 'erkenci_kus', title: 'Erkenci Kuş', icon: '🐦', description: 'Sabah namazına camiye gelenler.', color: 'bg-amber-500', value: 50 },
-  { id: 'cemaat_gulu', title: 'Cemaat Gülü', icon: '🌹', description: 'Sürekli cemaatle kılanlar.', color: 'bg-rose-500', value: 75 },
+  { id: 'namaz_kurtu', title: 'İstikrar Abidesi', icon: '🕌', description: '5 Vakit namazını eksiksiz kılanlar.', currency: 'NP', value: 100 },
+  { id: 'hafiz_adayi', title: 'Hafız Adayı', icon: '📖', description: 'Ezberlerini en hızlı tamamlayan.', currency: 'GP', value: 150 },
+  { id: 'sabah_yildizi', title: 'Sabah Yıldızı', icon: '✨', description: 'Sabah namazı buluşmalarına katılan.', currency: 'NP', value: 50 },
+  { id: 'cemaat_lideri', title: 'Safın Öncüsü', icon: '🤲', description: 'Sürekli cemaatle kılanlar.', currency: 'NP', value: 75 },
 ];
 
 export const INITIAL_TASKS: WeeklyTask[] = [
-  { id: 1, title: 'Cuma Günü Camiye Git ve Namaz Kıl', reward: 150, currency: 'NP', target: 1 },
+  { id: 1, title: 'Cuma Namazına Katılım', reward: 150, currency: 'NP', target: 1 },
+  { id: 2, title: 'Yasin Suresi Okuması', reward: 200, currency: 'GP', target: 1 },
 ];
 
 export const INITIAL_ANNOUNCEMENTS: Announcement[] = [
-  { id: 1, title: 'Hoşgeldiniz', message: 'Yeni dönem hayırlı olsun!', date: '01.01.2024', classCode: '1453' }
+  { id: 1, title: 'Dönem Başlangıcı', message: 'Yeni eğitim döneminde başarılar dileriz.', date: '01.09.2024', classCode: '1453' }
 ];
 
 export const INITIAL_INSTRUCTORS: Instructor[] = [
-  { id: 1, name: 'Hoca Ahmet', username: 'hoca', password: '123', classCodes: ['1453'] }
+  { id: 1, name: 'Mehmet Abisi', username: 'mehmet', password: '123', classCodes: ['1453'] }
 ];
 
 export const INITIAL_STUDENTS: Student[] = [
   {
     id: 101,
-    name: 'Örnek Öğrenci',
-    username: 'ogrenci',
+    name: 'Ahmet Yılmaz',
+    username: 'ahmet',
     password: '123',
-    group: 'Kaşif Grubu',
+    group: 'Yıldızlar',
     status: 'approved',
     classCode: '1453',
-    points: 1000,
-    namazPoints: 50,
+    parentPhone: '0555 111 22 33',
+    studentPhone: '0555 444 55 66',
+    address: 'Sultangazi Merkez Mah.',
+    school: 'İmam Hatip Ortaokulu',
+    points: 1250,
+    namazPoints: 450,
     inventory: [],
-    badges: [],
+    pendingItems: [],
+    badges: ['namaz_kurtu'],
     completedTasks: [],
+    pendingTasks: [],
     attendance: {},
     reading: {},
     memorization: {},

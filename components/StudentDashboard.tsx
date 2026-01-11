@@ -3,9 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   FaBookOpen, FaGamepad, FaShoppingBasket, FaSignOutAlt, 
   FaCoins, FaStar, FaCheck, FaTimes, FaClock, FaUser, FaMicrophone, FaBolt, FaTasks, FaTrophy, FaPlay,
-  FaCloudSun, FaSun, FaCloud, FaMoon, FaCloudMoon, FaPause, FaStop, FaHeadphones, FaShoppingCart, FaCalendarAlt, FaMedal, FaGift, FaHourglassHalf, FaLock, FaExclamationCircle, FaRobot
+  FaCloudSun, FaSun, FaCloud, FaMoon, FaCloudMoon, FaPause, FaStop, FaHeadphones, FaShoppingCart, FaCalendarAlt, FaMedal, FaGift, FaHourglassHalf, FaLock, FaExclamationCircle, FaRobot, FaMapPin, FaCalendarDay
 } from 'react-icons/fa';
-import { Student, MarketItem, WeeklyTask, Announcement, Badge, Surah, PendingItem } from '../types';
+import { Student, MarketItem, WeeklyTask, Announcement, Badge, Surah, PendingItem, AppEvent } from '../types';
 import { SURAH_LIST } from '../constants';
 import QuizGame from './QuizGame';
 import DuelGame from './DuelGame';
@@ -18,6 +18,7 @@ interface StudentDashboardProps {
   tasks: WeeklyTask[];
   announcements: Announcement[];
   badges: Badge[];
+  events: AppEvent[];
 }
 
 interface PrayerTime {
@@ -37,7 +38,7 @@ interface NotificationState {
 
 export default function StudentDashboard({ 
   student, updateStudent, onLogout,
-  marketItems, tasks, announcements, badges
+  marketItems, tasks, announcements, badges, events
 }: StudentDashboardProps) {
   const [activeTab, setActiveTab] = useState<'home' | 'academic' | 'ezber' | 'games' | 'market'>('home');
   const [prayerTimes, setPrayerTimes] = useState<PrayerTime[]>([]);
@@ -74,10 +75,22 @@ export default function StudentDashboard({
     }
   }, [notification.show]);
 
+  const parseTime = (t: string) => {
+    if (!t) return { hour: 0, minute: 0 };
+    const [h, m] = t.split(':').map(Number);
+    return { hour: h || 0, minute: m || 0 };
+  };
+
   useEffect(() => {
     async function fetchPrayers() {
       try {
+        // API çağrısı
         const res = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Istanbul&country=Turkey&method=13');
+        
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        
         const json = await res.json();
         const timings = json.data.timings;
         const mapped: PrayerTime[] = [
@@ -89,7 +102,23 @@ export default function StudentDashboard({
         ];
         setPrayerTimes(mapped);
       } catch (e) {
-        console.error("API error", e);
+        console.error("API error, using fallback data", e);
+        // Fallback: Varsayılan (Tahmini) İstanbul Vakitleri
+        const fallbackTimings = {
+            Fajr: "06:00",
+            Dhuhr: "13:00",
+            Asr: "16:30",
+            Maghrib: "19:00",
+            Isha: "20:30"
+        };
+        const mapped: PrayerTime[] = [
+          { id: 'sabah', label: 'Sabah', time: fallbackTimings.Fajr, ...parseTime(fallbackTimings.Fajr) },
+          { id: 'ogle', label: 'Öğle', time: fallbackTimings.Dhuhr, ...parseTime(fallbackTimings.Dhuhr) },
+          { id: 'ikindi', label: 'İkindi', time: fallbackTimings.Asr, ...parseTime(fallbackTimings.Asr) },
+          { id: 'aksam', label: 'Akşam', time: fallbackTimings.Maghrib, ...parseTime(fallbackTimings.Maghrib) },
+          { id: 'yatsi', label: 'Yatsı', time: fallbackTimings.Isha, ...parseTime(fallbackTimings.Isha) },
+        ];
+        setPrayerTimes(mapped);
       } finally {
         setLoading(false);
       }
@@ -106,11 +135,6 @@ export default function StudentDashboard({
       }
     };
   }, []);
-
-  const parseTime = (t: string) => {
-    const [h, m] = t.split(':').map(Number);
-    return { hour: h, minute: m };
-  };
 
   const getStatus = (p: PrayerTime) => {
     const now = new Date();
@@ -295,23 +319,54 @@ export default function StudentDashboard({
   };
 
   const toggleSurahAudio = (surah: Surah) => {
+    // 1. Stop existing audio
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
     }
+
+    // 2. If clicking same surah, toggle off
     if (playingSurahId === surah.id) {
       setPlayingSurahId(null);
       return;
     }
-    const paddedNumber = String(surah.number).padStart(3, '0');
+    
+    // Fix for decimal numbers (e.g. 36.1 for Yasin pages) -> converts to 36 to get the full Surah mp3
+    const baseNumber = Math.floor(surah.number);
+    const paddedNumber = String(baseNumber).padStart(3, '0');
     const url = `https://server8.mp3quran.net/afs/${paddedNumber}.mp3`;
+    
     const newAudio = new Audio(url);
+    const startTime = surah.audioStartTime || 0;
+    
+    // Attempt to set time before playing
+    newAudio.currentTime = startTime;
+
+    const playPromise = newAudio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+           // Ensure seek is correct after playback starts
+           if (startTime > 0 && Math.abs(newAudio.currentTime - startTime) > 1) {
+              newAudio.currentTime = startTime;
+           }
+        })
+        .catch(error => {
+           // Ignore 'interrupted by pause' errors which happen during rapid switching
+           if (error.name === 'AbortError' || error.message?.includes('interrupted')) {
+             return;
+           }
+           console.error("Audio play failed", error);
+        });
+    }
+
+    // Reference assignments
+    audioRef.current = newAudio;
+    setPlayingSurahId(surah.id);
+
     newAudio.addEventListener('ended', () => {
       setPlayingSurahId(null);
     });
-    newAudio.play().catch(e => console.error("Audio play failed", e));
-    audioRef.current = newAudio;
-    setPlayingSurahId(surah.id);
   };
 
   return (
@@ -478,6 +533,36 @@ export default function StudentDashboard({
                 )}
              </div>
 
+            {/* EVENTS / ACTIVITIES SECTION (NEW) */}
+            {events.length > 0 && (
+                <div>
+                   <h3 className="font-bold text-slate-700 text-sm uppercase tracking-wide mb-4 px-1">Yaklaşan Etkinlikler</h3>
+                   <div className="space-y-4">
+                       {events.map(event => (
+                           <div key={event.id} className="bg-gradient-to-br from-orange-400 to-rose-500 p-5 rounded-2xl text-white shadow-lg shadow-orange-200 relative overflow-hidden">
+                               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10"></div>
+                               <div className="relative z-10">
+                                   <div className="flex justify-between items-start mb-2">
+                                       <span className="bg-white/20 px-2 py-0.5 rounded text-[10px] font-bold uppercase backdrop-blur-sm">{event.classCode === 'GLOBAL' ? 'Tüm Kaşifler' : 'Grubuna Özel'}</span>
+                                       <FaCalendarDay className="text-white/50 text-xl" />
+                                   </div>
+                                   <h4 className="font-black text-xl mb-1">{event.title}</h4>
+                                   <p className="text-xs text-orange-100 mb-3 line-clamp-2">{event.description}</p>
+                                   <div className="flex gap-4 text-xs font-bold">
+                                       <div className="flex items-center gap-1 bg-black/10 px-2 py-1 rounded-lg">
+                                           <FaClock /> {event.date} {event.time}
+                                       </div>
+                                       <div className="flex items-center gap-1 bg-black/10 px-2 py-1 rounded-lg">
+                                           <FaMapPin /> {event.location}
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       ))}
+                   </div>
+                </div>
+            )}
+
              {/* Haftalık Görevler */}
              {tasks.length > 0 && (
                <div>
@@ -539,6 +624,7 @@ export default function StudentDashboard({
           </div>
         )}
         
+        {/* Rest of the tabs remain similar... */}
         {activeTab === 'academic' && (
            <div className="animate-fade-in-up space-y-6">
               {/* Active Assignment Section */}
@@ -721,7 +807,7 @@ export default function StudentDashboard({
       {/* Modern Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2 pb-6 px-6 flex justify-around items-center z-50">
         <NavButton active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={<FaUser />} label="Profil" />
-        <NavButton active={activeTab === 'academic'} onClick={() => setActiveTab('academic')} icon={<FaBookOpen />} label="Akademik" />
+        <NavButton active={activeTab === 'academic'} onClick={() => setActiveTab('academic')} icon={<FaBookOpen />} label="Ders" />
         <NavButton active={activeTab === 'ezber'} onClick={() => setActiveTab('ezber')} icon={<FaMicrophone />} label="Ezber" />
         <NavButton active={activeTab === 'games'} onClick={() => setActiveTab('games')} icon={<FaGamepad />} label="Oyun" />
         <NavButton active={activeTab === 'market'} onClick={() => setActiveTab('market')} icon={<FaShoppingBasket />} label="Market" />

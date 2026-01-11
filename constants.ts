@@ -1,9 +1,9 @@
 
 import { Badge, MarketItem, Student, Surah, WeeklyTask, Announcement, Instructor } from './types';
 
-// Ortaokul seviyesi için ezber sırası: Fatiha + (Nas -> Duha)
+// YENİ SIRALAMA: Kısa Sureler -> Fatiha -> Orta Sureler
 export const SURAH_LIST: Surah[] = [
-  { id: 'fatiha', title: 'Fatiha Suresi', number: 1 },
+  // Kısa Sureler (Nas -> Duha) - En üstte kalması istendi
   { id: 'nas', title: 'Nas Suresi', number: 114 },
   { id: 'felak', title: 'Felak Suresi', number: 113 },
   { id: 'ihlas', title: 'İhlas Suresi', number: 112 },
@@ -26,13 +26,23 @@ export const SURAH_LIST: Surah[] = [
   { id: 'tin', title: 'Tin Suresi', number: 95 },
   { id: 'insirah', title: 'İnşirah Suresi', number: 94 },
   { id: 'duha', title: 'Duha Suresi', number: 93 },
+
+  // Fatiha
+  { id: 'fatiha', title: 'Fatiha Suresi', number: 1 },
+
+  // Orta Sureler
+  { id: 'mulk', title: 'Mülk (Tebareke)', number: 67 },
+  { id: 'nebe', title: 'Nebe (Amme)', number: 78 },
+  { id: 'buruc', title: 'Buruc Suresi', number: 85 },
+  { id: 'tarik', title: 'Tarık Suresi', number: 86 },
+  { id: 'leyl', title: 'Leyl Suresi', number: 92 },
 ];
 
 export const INITIAL_MARKET_ITEMS: MarketItem[] = [
-  { id: 'kantin_cek', title: '50TL Kantin Çeki', price: 500, currency: 'GP', icon: '🍔', description: 'Okul kantininde geçerli.', stock: 10 },
-  { id: 'ozel_izin', title: 'Serbest Kıyafet Günü', price: 1000, currency: 'NP', icon: '👕', description: 'Bir gün serbest kıyafet hakkı.', stock: 5 },
-  { id: 'mac_bileti', title: 'Halı Saha Maçı', price: 750, currency: 'GP', icon: '⚽', description: 'Arkadaşlarla maç organizasyonu.', stock: 20 },
-  { id: 'kitap', title: 'D&R Hediye Kartı', price: 1500, currency: 'NP', icon: '📚', description: 'İstediğin bir kitap için.', stock: 3 },
+  { id: 'kantin_cek', title: '50TL Kantin Çeki', price: 500, currency: 'GP', icon: '🍔', description: 'Okul kantininde geçerli.', stock: 10, classCode: '1453' },
+  { id: 'ozel_izin', title: 'Serbest Kıyafet Günü', price: 1000, currency: 'NP', icon: '👕', description: 'Bir gün serbest kıyafet hakkı.', stock: 5, classCode: '1453' },
+  { id: 'mac_bileti', title: 'Halı Saha Maçı', price: 750, currency: 'GP', icon: '⚽', description: 'Arkadaşlarla maç organizasyonu.', stock: 20, classCode: '1453' },
+  { id: 'kitap', title: 'D&R Hediye Kartı', price: 1500, currency: 'NP', icon: '📚', description: 'İstediğin bir kitap için.', stock: 3, classCode: '1453' },
 ];
 
 export const AVAILABLE_BADGES: Badge[] = [
@@ -52,7 +62,9 @@ export const INITIAL_ANNOUNCEMENTS: Announcement[] = [
 ];
 
 export const INITIAL_INSTRUCTORS: Instructor[] = [
-  { id: 1, name: 'Mehmet Abisi', username: 'mehmet', password: '123', classCodes: ['1453'] }
+  { id: 1, name: 'Mehmet Abisi', username: 'mehmet', password: '123', classCodes: ['1453'] },
+  // TEST HESABI
+  { id: 999, name: 'Test Eğitmen', username: '1', password: '1', classCodes: ['TEST'] }
 ];
 
 export const INITIAL_STUDENTS: Student[] = [
@@ -73,6 +85,31 @@ export const INITIAL_STUDENTS: Student[] = [
     inventory: [],
     pendingItems: [],
     badges: ['namaz_kurtu'],
+    completedTasks: [],
+    pendingTasks: [],
+    attendance: {},
+    reading: {},
+    memorization: {},
+    prayers: {}
+  },
+  // TEST HESABI
+  {
+    id: 999,
+    name: 'Test Kaşif',
+    username: '1',
+    password: '1',
+    group: 'Test Grubu',
+    status: 'approved',
+    classCode: 'TEST',
+    parentPhone: '0500 000 00 00',
+    studentPhone: '',
+    address: 'Test Adresi',
+    school: 'Test Okulu',
+    points: 500,
+    namazPoints: 200,
+    inventory: [],
+    pendingItems: [],
+    badges: [],
     completedTasks: [],
     pendingTasks: [],
     attendance: {},

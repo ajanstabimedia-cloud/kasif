@@ -31,6 +31,28 @@ export interface Announcement {
   classCode: string;
 }
 
+export interface AppEvent {
+  id: number;
+  title: string;
+  description: string;
+  date: string; // YYYY-MM-DD
+  time: string; // HH:mm
+  location: string;
+  classCode: string; // 'GLOBAL' for admin events, specific code for instructors
+  createdBy: 'admin' | 'instructor';
+}
+
+export interface WeeklyReport {
+  id: number;
+  instructorId: number;
+  instructorName: string;
+  reportDate: string; // Date of submission
+  isHeld: boolean;
+  attendeeCount: number;
+  location: string;
+  notes: string;
+}
+
 export interface PendingItem {
   id: string; // unique transaction id
   itemId: string;
@@ -84,10 +106,12 @@ export interface MarketItem {
   icon: string;
   description: string;
   stock: number; // Stock tracking
+  classCode: string; // Hangi gruba ait olduğu
 }
 
 export interface Surah {
   id: string;
   title: string;
   number: number;
+  audioStartTime?: number; // Ses dosyasının başlayacağı saniye (Yasin sayfaları için)
 }
